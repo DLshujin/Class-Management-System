@@ -1,0 +1,13 @@
+/* 全局修复 Element Plus 弹层被遮挡问题 */
+.el-select-dropdown, .el-popper, .el-picker-panel, .el-dropdown-menu, .el-dialog__wrapper {
+  z-index: 3000 !important;
+}
+
+/* 常见父容器去除 overflow:hidden，避免弹层被裁剪 */
+.page-container,
+.el-card,
+.filter-container,
+.search-card,
+.table-card {
+  overflow: visible !important;
+} 

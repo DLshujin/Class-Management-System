@@ -1,0 +1,50 @@
+*.env
+.env
+.env.*
+!.env.example
+
+# Local Directory Settings
+.vscode/*
+!.vscode/extensions.json
+.idea/*
+
+# Log files
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules
+dist
+dist-ssr
+*.local
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Optional dependency lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Maven
+target/
+*.jar
+*.war
+
+# Database data
+mysql-data/
+redis-data/
