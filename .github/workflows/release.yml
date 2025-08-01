@@ -1,0 +1,259 @@
+name: 🎉 Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # 🏗️ 构建发布版本
+  build:
+    name: 🏗️ Build Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 📥 Install dependencies
+      run: npm ci
+      
+    - name: 🧪 Run tests
+      run: npm run test
+      
+    - name: 🏗️ Build for production
+      run: npm run build
+      
+    - name: 📦 Create distribution package
+      run: |
+        zip -r dist.zip dist/
+        tar -czf dist.tar.gz dist/
+        
+    - name: 📤 Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-build
+        path: |
+          dist.zip
+          dist.tar.gz
+        retention-days: 30
+
+  # 🎉 创建GitHub Release
+  create-release:
+    name: 🎉 Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📝 Extract version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+    - name: 📝 Generate changelog
+      id: changelog
+      run: |
+        if [[ -f CHANGELOG.md ]]; then
+          # 提取当前版本的更新日志
+          sed -n "/^## \[${{ steps.get_version.outputs.VERSION }}\]/,/^## \[/p" CHANGELOG.md | head -n -1 > current_changelog.md
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          cat current_changelog.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "CHANGELOG=发布版本 ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+        fi
+      
+    - name: 🎉 Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          ## 🎉 教务管理系统 ${{ steps.get_version.outputs.VERSION }}
+          
+          ### 📋 更新内容
+          ${{ steps.changelog.outputs.CHANGELOG }}
+          
+          ### 📦 安装方式
+          
+          #### 🚀 快速开始
+          ```bash
+          # 克隆项目
+          git clone https://github.com/DLshujin/Class-Management-System.git
+          cd Class-Management-System
+          
+          # 切换到此版本
+          git checkout ${{ steps.get_version.outputs.VERSION }}
+          
+          # 安装依赖
+          npm install
+          
+          # 启动开发服务器
+          npm run dev
+          ```
+          
+          #### 📦 下载构建文件
+          - [dist.zip](下载链接) - 生产构建文件 (ZIP格式)
+          - [dist.tar.gz](下载链接) - 生产构建文件 (TAR.GZ格式)
+          
+          ### 🔧 技术信息
+          - **Node.js**: 16.0+
+          - **Vue**: 3.3.4
+          - **Element Plus**: 2.3.8
+          - **Vite**: 5.4.19
+          
+          ### 📞 获取帮助
+          - 📚 [文档](https://github.com/DLshujin/Class-Management-System#readme)
+          - 🐛 [报告问题](https://github.com/DLshujin/Class-Management-System/issues)
+          - 💬 [讨论](https://github.com/DLshujin/Class-Management-System/discussions)
+          
+        draft: false
+        prerelease: ${{ contains(steps.get_version.outputs.VERSION, 'alpha') || contains(steps.get_version.outputs.VERSION, 'beta') || contains(steps.get_version.outputs.VERSION, 'rc') }}
+
+  # 📤 上传发布资源
+  upload-assets:
+    name: 📤 Upload Release Assets
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: 📥 Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: release-build
+        
+    - name: 📤 Upload ZIP file
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./dist.zip
+        asset_name: class-management-system-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
+        
+    - name: 📤 Upload TAR.GZ file
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./dist.tar.gz
+        asset_name: class-management-system-${{ github.ref_name }}.tar.gz
+        asset_content_type: application/gzip
+
+  # 🚢 自动部署到生产环境
+  deploy-production:
+    name: 🚢 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [create-release, upload-assets]
+    if: ${{ !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') }}
+    
+    environment:
+      name: production
+      url: https://class-management.com
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 📥 Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: release-build
+        
+    - name: 🚢 Deploy to production
+      run: |
+        echo "🚢 正在部署到生产环境..."
+        echo "📦 解压构建文件..."
+        unzip -q dist.zip
+        echo "🌐 上传到服务器..."
+        # 这里添加实际的部署脚本
+        # 例如: rsync, scp, 或使用云服务商的CLI工具
+        echo "✅ 生产环境部署完成！"
+
+  # 📱 发布通知
+  notify:
+    name: 📱 Notify Release
+    runs-on: ubuntu-latest
+    needs: [create-release, deploy-production]
+    if: always()
+    
+    steps:
+    - name: 📱 Send Slack notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        custom_payload: |
+          {
+            attachments: [{
+              color: '${{ job.status }}' === 'success' ? 'good' : 'danger',
+              title: '🎉 新版本发布',
+              fields: [{
+                title: '版本',
+                value: '${{ github.ref_name }}',
+                short: true
+              }, {
+                title: '状态',
+                value: '${{ job.status }}' === 'success' ? '✅ 成功' : '❌ 失败',
+                short: true
+              }, {
+                title: '发布链接',
+                value: 'https://github.com/DLshujin/Class-Management-System/releases/tag/${{ github.ref_name }}',
+                short: false
+              }]
+            }]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  # 📧 邮件通知
+  email-notify:
+    name: 📧 Email Notification
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+    - name: 📧 Send email notification
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "🎉 教务管理系统 ${{ github.ref_name }} 发布"
+        to: adilei.shujin@gmail.com
+        from: GitHub Actions <noreply@github.com>
+        html_body: |
+          <h2>🎉 新版本发布通知</h2>
+          <p><strong>项目:</strong> 教务管理系统</p>
+          <p><strong>版本:</strong> ${{ github.ref_name }}</p>
+          <p><strong>发布时间:</strong> ${{ github.event.head_commit.timestamp }}</p>
+          <p><strong>发布链接:</strong> <a href="https://github.com/DLshujin/Class-Management-System/releases/tag/${{ github.ref_name }}">查看发布</a></p>
+          <p><strong>项目链接:</strong> <a href="https://github.com/DLshujin/Class-Management-System">GitHub 仓库</a></p>
+          <hr>
+          <p>此邮件由 GitHub Actions 自动发送</p>

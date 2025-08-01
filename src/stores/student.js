@@ -30,8 +30,8 @@ export const useStudentStore = defineStore('student', () => {
       address: '北京市朝阳区',
       school: '北京市第一中学',
       grade: '高中一年级',
-      joinDate: '2024-01-15',
-      status: 1,
+      join_date: '2024-01-15',
+      status: 'active',
       level: '初级',
       courseCount: 3,
       totalHours: 48,
@@ -40,7 +40,14 @@ export const useStudentStore = defineStore('student', () => {
       emergencyPhone: '13900139002',
       medicalInfo: '无特殊病史',
       learningGoals: '掌握Python基础编程',
-      notes: '学习积极性高，理解能力强'
+      notes: '学习积极性高，理解能力强',
+      // 添加班级和课程关联
+      classId: 1,
+      className: 'Python基础A班',
+      courseId: 1,
+      courseName: 'Python基础入门',
+      teacherId: 1,
+      teacherName: '张伟'
     },
     {
       id: 2,
@@ -55,7 +62,7 @@ export const useStudentStore = defineStore('student', () => {
       school: '北京市第二中学',
       grade: '初中三年级',
       joinDate: '2024-02-01',
-      status: 1,
+      status: 'active',
       level: '中级',
       courseCount: 2,
       totalHours: 32,
@@ -64,7 +71,14 @@ export const useStudentStore = defineStore('student', () => {
       emergencyPhone: '13900139004',
       medicalInfo: '无特殊病史',
       learningGoals: '学习Java编程基础',
-      notes: '逻辑思维能力强，适合编程学习'
+      notes: '逻辑思维能力强，适合编程学习',
+      // 添加班级和课程关联
+      classId: 2,
+      className: 'Java程序设计B班',
+      courseId: 2,
+      courseName: 'Java程序设计',
+      teacherId: 2,
+      teacherName: '李娜'
     },
     {
       id: 3,
@@ -79,7 +93,7 @@ export const useStudentStore = defineStore('student', () => {
       school: '北京市第三中学',
       grade: '高中二年级',
       joinDate: '2024-01-20',
-      status: 1,
+      status: 'active',
       level: '高级',
       courseCount: 4,
       totalHours: 64,
@@ -88,7 +102,14 @@ export const useStudentStore = defineStore('student', () => {
       emergencyPhone: '13900139006',
       medicalInfo: '无特殊病史',
       learningGoals: '深入学习人工智能',
-      notes: '对AI技术有浓厚兴趣，学习能力强'
+      notes: '对AI技术有浓厚兴趣，学习能力强',
+      // 添加班级和课程关联
+      classId: 3,
+      className: 'AI智能C班',
+      courseId: 3,
+      courseName: '人工智能入门',
+      teacherId: 4,
+      teacherName: '陈思'
     },
     {
       id: 4,
@@ -103,7 +124,7 @@ export const useStudentStore = defineStore('student', () => {
       school: '北京市第四中学',
       grade: '初中二年级',
       joinDate: '2024-03-01',
-      status: 1,
+      status: 'active',
       level: '初级',
       courseCount: 1,
       totalHours: 16,
@@ -112,7 +133,14 @@ export const useStudentStore = defineStore('student', () => {
       emergencyPhone: '13900139008',
       medicalInfo: '无特殊病史',
       learningGoals: '学习Scratch少儿编程',
-      notes: '对编程有浓厚兴趣，动手能力强'
+      notes: '对编程有浓厚兴趣，动手能力强',
+      // 添加班级和课程关联
+      classId: 5,
+      className: 'Scratch启蒙E班',
+      courseId: 5,
+      courseName: 'Scratch少儿编程',
+      teacherId: 5,
+      teacherName: '刘洋'
     },
     {
       id: 5,
@@ -127,7 +155,7 @@ export const useStudentStore = defineStore('student', () => {
       school: '北京市第五中学',
       grade: '高中三年级',
       joinDate: '2024-01-10',
-      status: 1,
+      status: 'active',
       level: '高级',
       courseCount: 5,
       totalHours: 80,
@@ -136,7 +164,105 @@ export const useStudentStore = defineStore('student', () => {
       emergencyPhone: '13900139010',
       medicalInfo: '无特殊病史',
       learningGoals: '深入学习Web开发技术',
-      notes: '技术基础扎实，学习能力强'
+      notes: '技术基础扎实，学习能力强',
+      // 添加班级和课程关联
+      classId: 4,
+      className: '网页设计D班',
+      courseId: 4,
+      courseName: '网页设计基础',
+      teacherId: 3,
+      teacherName: '王强'
+    },
+    // 添加更多学生到各班级
+    {
+      id: 6,
+      name: '周八',
+      gender: 0,
+      age: 15,
+      phone: '13800138006',
+      email: 'zhouba@example.com',
+      parentName: '周父',
+      parentPhone: '13900139011',
+      address: '北京市石景山区',
+      school: '北京市第六中学',
+      grade: '高中一年级',
+      joinDate: '2024-02-15',
+      status: 'active',
+      level: '初级',
+      courseCount: 2,
+      totalHours: 24,
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      emergencyContact: '周母',
+      emergencyPhone: '13900139012',
+      medicalInfo: '无特殊病史',
+      learningGoals: '学习Python编程入门',
+      notes: '对数学和逻辑很感兴趣',
+      classId: 1,
+      className: 'Python基础A班',
+      courseId: 1,
+      courseName: 'Python基础入门',
+      teacherId: 1,
+      teacherName: '张伟'
+    },
+    {
+      id: 7,
+      name: '吴九',
+      gender: 1,
+      age: 14,
+      phone: '13800138007',
+      email: 'wujiu@example.com',
+      parentName: '吴父',
+      parentPhone: '13900139013',
+      address: '北京市门头沟区',
+      school: '北京市第七中学',
+      grade: '初中三年级',
+      joinDate: '2024-03-01',
+      status: 'active',
+      level: '中级',
+      courseCount: 3,
+      totalHours: 40,
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      emergencyContact: '吴母',
+      emergencyPhone: '13900139014',
+      medicalInfo: '无特殊病史',
+      learningGoals: '深入学习Java编程',
+      notes: '编程基础扎实，学习积极主动',
+      classId: 2,
+      className: 'Java程序设计B班',
+      courseId: 2,
+      courseName: 'Java程序设计',
+      teacherId: 2,
+      teacherName: '李娜'
+    },
+    {
+      id: 8,
+      name: '郑十',
+      gender: 0,
+      age: 16,
+      phone: '13800138008',
+      email: 'zhengshi@example.com',
+      parentName: '郑父',
+      parentPhone: '13900139015',
+      address: '北京市房山区',
+      school: '北京市第八中学',
+      grade: '高中二年级',
+      joinDate: '2024-03-10',
+      status: 'active',
+      level: '高级',
+      courseCount: 4,
+      totalHours: 56,
+      avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face',
+      emergencyContact: '郑母',
+      emergencyPhone: '13900139016',
+      medicalInfo: '无特殊病史',
+      learningGoals: '掌握AI算法开发',
+      notes: '数学成绩优秀，对算法有天赋',
+      classId: 3,
+      className: 'AI智能C班',
+      courseId: 3,
+      courseName: '人工智能入门',
+      teacherId: 4,
+      teacherName: '陈思'
     }
   ]
 
@@ -275,7 +401,7 @@ export const useStudentStore = defineStore('student', () => {
         id: Date.now(),
         ...studentData,
         studentNo: `S2023${String(students.value.length + 1).padStart(3, '0')}`,
-        status: 1,
+        status: 'active',
         courseCount: 0,
         totalHours: 0,
         enrollDate: new Date().toISOString().slice(0, 10),
@@ -295,7 +421,7 @@ export const useStudentStore = defineStore('student', () => {
         '/students',
         studentData,
         mockResponse,
-        { method: 'post' }
+        { method: 'post', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，直接添加到本地列表以直观显示变化
@@ -321,19 +447,20 @@ export const useStudentStore = defineStore('student', () => {
         `/students/${id}`,
         studentData,
         mockResponse,
-        { method: 'put' }
+        { method: 'put', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，更新本地列表以直观显示变化
       if (getDataSourceType.value === 'mock') {
-        const index = mockStudents.findIndex(s => s.id === id)
+        const numId = parseInt(id, 10) // 确保ID为数字类型
+        const index = mockStudents.findIndex(s => s.id === numId)
         if (index !== -1) {
-          mockStudents[index] = { ...mockStudents[index], ...studentData }
+          mockStudents[index] = { ...mockStudents[index], ...studentData, id: numId }
         }
         // 同时更新当前显示的数据
-        const displayIndex = students.value.findIndex(s => s.id === id)
+        const displayIndex = students.value.findIndex(s => s.id === numId)
         if (displayIndex !== -1) {
-          students.value[displayIndex] = { ...students.value[displayIndex], ...studentData }
+          students.value[displayIndex] = { ...students.value[displayIndex], ...studentData, id: numId }
         }
       }
       console.log(`✅ 学生更新成功 (数据源: ${getDataSourceType.value})`)
@@ -353,17 +480,18 @@ export const useStudentStore = defineStore('student', () => {
         `/students/${id}`,
         {},
         mockResponse,
-        { method: 'delete' }
+        { method: 'delete', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，从本地列表移除以直观显示变化
       if (getDataSourceType.value === 'mock') {
-        const index = mockStudents.findIndex(s => s.id === id)
+        const numId = parseInt(id, 10) // 确保ID为数字类型
+        const index = mockStudents.findIndex(s => s.id === numId)
         if (index !== -1) {
           mockStudents.splice(index, 1)
         }
         // 同时更新当前显示的数据
-        const displayIndex = students.value.findIndex(s => s.id === id)
+        const displayIndex = students.value.findIndex(s => s.id === numId)
         if (displayIndex !== -1) {
           students.value.splice(displayIndex, 1)
           pagination.value.total--

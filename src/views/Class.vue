@@ -59,6 +59,91 @@
       </div>
     </div>
     
+    <!-- 统计概览卡片 -->
+    <div class="stats-overview">
+      <div class="stats-grid">
+        <div class="stat-card total-classes fade-in-up">
+          <div class="stat-header">
+            <div class="stat-icon total-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
+              </svg>
+            </div>
+            <div class="trend-badge positive">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-body">
+            <div class="stat-number">{{ classes.length }}</div>
+            <div class="stat-label">班级总数</div>
+            <div class="stat-description">系统中创建的所有班级</div>
+          </div>
+        </div>
+
+        <div class="stat-card active-classes fade-in-up" style="animation-delay: 0.1s">
+          <div class="stat-header">
+            <div class="stat-icon active-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="trend-badge positive">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-body">
+            <div class="stat-number">{{ classes.filter(c => c.status === 'active').length }}</div>
+            <div class="stat-label">正常授课</div>
+            <div class="stat-description">当前正在授课的班级</div>
+          </div>
+        </div>
+
+        <div class="stat-card student-count fade-in-up" style="animation-delay: 0.2s">
+          <div class="stat-header">
+            <div class="stat-icon student-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M16 4C16 2.9 15.1 2 14 2H10C8.9 2 8 2.9 8 4H16M16 4H20C20.6 4 21 4.4 21 5S20.6 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.4 6 3 5.6 3 5S3.4 4 4 4H8"/>
+              </svg>
+            </div>
+            <div class="trend-badge positive">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-body">
+            <div class="stat-number">{{ getTotalStudents() }}</div>
+            <div class="stat-label">学员总数</div>
+            <div class="stat-description">所有班级的学员总数</div>
+          </div>
+        </div>
+
+        <div class="stat-card teacher-count fade-in-up" style="animation-delay: 0.3s">
+          <div class="stat-header">
+            <div class="stat-icon teacher-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <div class="trend-badge positive">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-body">
+            <div class="stat-number">{{ getUniqueTeachers() }}</div>
+            <div class="stat-label">授课教师</div>
+            <div class="stat-description">参与授课的教师数量</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 现代化搜索和筛选区域 -->
     <div class="search-controls modern-card">
       <div class="search-header">
@@ -228,110 +313,7 @@
       </div>
     </div>
 
-    <!-- 现代化统计仪表板 -->
-    <div class="stats-dashboard">
-      <div class="stats-grid">
-        <div class="stat-card total">
-          <div class="stat-background">
-            <div class="stat-pattern"></div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-header">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
-                </svg>
-              </div>
-              <div class="stat-trend positive">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="stat-data">
-              <div class="stat-number">{{ totalClasses }}</div>
-              <div class="stat-label">总班级数</div>
-              <div class="stat-description">包含所有状态的班级</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="stat-card active">
-          <div class="stat-background">
-            <div class="stat-pattern"></div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-header">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-                </svg>
-              </div>
-              <div class="stat-trend positive">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="stat-data">
-              <div class="stat-number">{{ activeClasses }}</div>
-              <div class="stat-label">正常授课</div>
-              <div class="stat-description">活跃运行中的班级</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="stat-card paused">
-          <div class="stat-background">
-            <div class="stat-pattern"></div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-header">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
-                </svg>
-              </div>
-              <div class="stat-trend neutral">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="stat-data">
-              <div class="stat-number">{{ pausedClasses }}</div>
-              <div class="stat-label">暂时停课</div>
-              <div class="stat-description">临时暂停的班级</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="stat-card students">
-          <div class="stat-background">
-            <div class="stat-pattern"></div>
-          </div>
-          <div class="stat-content">
-            <div class="stat-header">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path d="M16,4C18.11,4 20.11,4.87 21.66,6.38L20.25,7.81C19.15,6.75 17.63,6.1 16,6.1C14.37,6.1 12.85,6.75 11.75,7.81L10.34,6.38C11.89,4.87 13.89,4 16,4M16,8.2C17.2,8.2 18.35,8.64 19.22,9.5L17.81,10.94C17.35,10.5 16.7,10.25 16,10.25C15.3,10.25 14.65,10.5 14.19,10.94L12.78,9.5C13.65,8.64 14.8,8.2 16,8.2M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M16,12.3A1.7,1.7 0 0,1 17.7,14A1.7,1.7 0 0,1 16,15.7A1.7,1.7 0 0,1 14.3,14A1.7,1.7 0 0,1 16,12.3Z"/>
-                </svg>
-              </div>
-              <div class="stat-trend positive">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="stat-data">
-              <div class="stat-number">{{ totalStudents }}</div>
-              <div class="stat-label">总学生数</div>
-              <div class="stat-description">所有班级的学生人数</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     
     <!-- 现代化班级列表 -->
@@ -362,7 +344,8 @@
       </div>
         
       <div class="modern-table-container">
-        <el-table
+        <div class="table-scroll-wrapper">
+          <el-table
           :data="paginatedClasses"
           v-loading="classStore.loading"
           class="modern-table"
@@ -389,7 +372,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="name" label="班级信息" min-width="180">
+          <el-table-column prop="name" label="班级信息" min-width="150">
             <template #default="{ row }">
               <div class="class-info">
                 <div class="class-avatar">
@@ -405,7 +388,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="teacher" label="班主任" width="120">
+          <el-table-column prop="teacher" label="班主任" width="90">
             <template #default="{ row }">
               <div class="teacher-info">
                 <div class="teacher-avatar">
@@ -418,7 +401,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="type" label="班级类型" width="120">
+          <el-table-column prop="type" label="班级类型" width="90">
             <template #default="{ row }">
               <div class="type-badge" :class="'type-' + row.type">
                 <span class="type-dot"></span>
@@ -427,7 +410,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="grade" label="年级" width="100" align="center">
+          <el-table-column prop="grade" label="年级" width="70" align="center">
             <template #default="{ row }">
               <div class="grade-badge">
                 <span class="grade-text">{{ getGradeLabel(row.grade) }}</span>
@@ -435,7 +418,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="studentCount" label="学生数" width="100" align="center">
+          <el-table-column prop="studentCount" label="学生数" width="80" align="center">
             <template #default="{ row }">
               <div class="student-count">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -447,7 +430,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="status" label="状态" width="110" align="center">
+          <el-table-column prop="status" label="状态" width="80" align="center">
             <template #default="{ row }">
               <div class="status-badge" :class="'status-' + row.status">
                 <span class="status-dot"></span>
@@ -456,7 +439,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="startDate" label="开班时间" width="120" align="center">
+          <el-table-column prop="startDate" label="开班时间" width="100" align="center">
             <template #default="{ row }">
               <div class="date-info">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -467,7 +450,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="endDate" label="结束时间" width="120" align="center">
+          <el-table-column prop="endDate" label="结束时间" width="100" align="center">
             <template #default="{ row }">
               <div class="date-info">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -478,7 +461,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="description" label="备注信息" min-width="150" show-overflow-tooltip>
+          <el-table-column prop="description" label="备注信息" width="120" show-overflow-tooltip>
             <template #default="{ row }">
               <div class="description-text">
                 {{ row.description || '暂无备注' }}
@@ -486,7 +469,7 @@
             </template>
           </el-table-column>
           
-          <el-table-column label="操作" width="200" fixed="right" align="center">
+          <el-table-column label="操作" width="150" fixed="right" align="center">
             <template #default="{ row }">
               <div class="action-buttons">
                 <el-button 
@@ -526,6 +509,7 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
       </div>
       
       <!-- 现代化分页 -->
@@ -768,7 +752,10 @@ const searchForm = reactive({
 })
 
 // 统计计算属性 - 添加安全性检查
-const classes = computed(() => classStore.getClasses || [])
+const classes = computed(() => {
+  const classData = classStore.classes || classStore.getClasses || []
+  return Array.isArray(classData) ? classData : []
+})
 const totalClasses = computed(() => classes.value.length)
 const activeClasses = computed(() => classes.value.filter(c => c.status === 'active').length)
 const pausedClasses = computed(() => classes.value.filter(c => c.status === 'paused').length)
@@ -777,6 +764,23 @@ const totalStudents = computed(() => {
     return total + (cls.studentCount || 0)
   }, 0)
 })
+
+// 统计方法
+const getTotalStudents = () => {
+  return classes.value.reduce((total, cls) => {
+    return total + (cls.studentCount || 0)
+  }, 0)
+}
+
+const getUniqueTeachers = () => {
+  const teacherNames = new Set()
+  classes.value.forEach(cls => {
+    if (cls.teacherName || cls.teacher) {
+      teacherNames.add(cls.teacherName || cls.teacher)
+    }
+  })
+  return teacherNames.size
+}
 
 // 分页
 const currentPage = ref(1)
@@ -876,8 +880,16 @@ const courseOptions = computed(() => courseStore.getCourses || [])
 
 // 方法
 const loadData = async () => {
-  await classStore.fetchClasses()
-  await teacherStore.fetchTeachers()
+  try {
+    console.log('🔄 开始加载班级数据...')
+    await classStore.fetchClasses()
+    await teacherStore.fetchTeachers()
+    console.log('✅ 班级数据加载完成，共', classStore.classes?.length || 0, '条记录')
+    console.log('📊 当前classes数据:', classStore.classes)
+  } catch (error) {
+    console.error('❌ 数据加载失败:', error)
+    ElMessage.error('数据加载失败: ' + error.message)
+  }
 }
 
 const handleSearch = () => {
@@ -980,16 +992,16 @@ const handleAdd = () => {
 const handleEdit = (row) => {
   editingClass.value = row
   Object.assign(classForm, {
-    name: row.name,
-    teacher: row.teacher,
-    type: row.type,
-    grade: row.grade,
-    startDate: row.startDate,
-    endDate: row.endDate,
-    status: row.status,
-    maxStudents: row.maxStudents,
-    description: row.description,
-    courseId: row.courseId // 新增
+    name: row.name || '',
+    teacher: row.teacherName || row.teacher || '',  // 修正字段名映射
+    type: row.type || '重点班',  // 提供默认值
+    grade: row.grade || '三年级',  // 提供默认值
+    startDate: row.startDate || '',
+    endDate: row.endDate || '',
+    status: row.status === '在读' ? 'active' : (row.status === '结业' ? 'graduated' : (row.status === '停用' ? 'paused' : row.status)),  // 状态值映射
+    maxStudents: row.maxStudents || 30,
+    description: row.description || row.syllabus || '',  // 备注可能来自syllabus字段
+    courseId: row.courseId || ''
   })
   showAddDialog.value = true
 }
@@ -1032,7 +1044,22 @@ const submitForm = async () => {
   try {
     await classFormRef.value.validate()
     
+    // 准备提交数据，转换状态值回数据库格式
     const formData = { ...classForm }
+    
+    // 状态值转换：表单值 -> 数据库值
+    const statusMap = {
+      'active': '在读',
+      'graduated': '结业',
+      'paused': '停用'
+    }
+    
+    if (formData.status && statusMap[formData.status]) {
+      formData.status = statusMap[formData.status]
+    }
+    
+    // 确保字段完整性
+    formData.teacherName = formData.teacher  // 兼容字段
     
     if (editingClass.value) {
       // 编辑模式
@@ -1040,6 +1067,7 @@ const submitForm = async () => {
       if (result.success) {
         ElMessage.success('更新成功')
         showAddDialog.value = false
+        resetForm()  // 重置表单
         // 重新加载数据以确保列表更新
         await loadData()
       } else {
@@ -1051,6 +1079,7 @@ const submitForm = async () => {
       if (result.success) {
         ElMessage.success('添加成功')
         showAddDialog.value = false
+        resetForm()  // 重置表单
         // 重新加载数据以确保列表更新
         await loadData()
       } else {
@@ -1059,6 +1088,7 @@ const submitForm = async () => {
     }
   } catch (error) {
     console.error('表单提交失败:', error)
+    ElMessage.error('提交失败，请检查表单数据')
   }
 }
 
@@ -1125,6 +1155,120 @@ onMounted(() => {
   background: var(--bg-secondary);
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 页面响应式设计 */
+@media (max-width: 768px) {
+  .class-management-container {
+    padding: 12px;
+  }
+  
+  .page-header {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .modern-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* 搜索区域响应式 */
+  .search-controls {
+    padding: 16px;
+  }
+  
+  .search-form {
+    padding: 16px;
+  }
+  
+  .search-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .search-group {
+    width: 100%;
+  }
+  
+  .search-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .search-btn, .reset-btn {
+    width: 100%;
+  }
+  
+  /* 统计卡片响应式 */
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .class-management-container {
+    padding: 8px;
+  }
+  
+  .page-title h1 {
+    font-size: 24px !important;
+  }
+  
+  .page-subtitle {
+    font-size: 12px !important;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .modern-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* 超小屏幕统计卡片单列显示 */
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  /* 超小屏幕搜索区域优化 */
+  .search-controls {
+    margin-bottom: 12px;
+  }
+  
+  .search-header {
+    padding: 12px 16px;
+  }
+  
+  .search-title h3 {
+    font-size: 16px;
+  }
+  
+  .search-title p {
+    font-size: 12px;
+  }
 }
 
 /* 现代化卡片基础样式 */
@@ -1713,28 +1857,127 @@ onMounted(() => {
 }
 
 /* 现代化统计仪表板 */
-.stats-dashboard {
-  margin-bottom: 24px;
+.stats-overview {
+  margin-bottom: 20px;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
 .stat-card {
-  position: relative;
-  padding: 16px;
+  background: white;
   border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+  position: relative;
   overflow: hidden;
-  transition: var(--transition-medium);
-  height: 120px; /* 统一统计卡片高度 */
+  height: 120px;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.stat-card.total-classes::before {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.stat-card.active-classes::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.stat-card.student-count::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.stat-card.teacher-count::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.total-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.active-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.student-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.teacher-icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.trend-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trend-badge.positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.stat-body {
+  text-align: left;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-description {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
 .stat-card.total {
@@ -1926,6 +2169,39 @@ onMounted(() => {
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-light);
+}
+
+.table-scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .table-scroll-wrapper {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-table-container {
+    padding: 0 12px 24px 12px;
+  }
+  
+  .table-scroll-wrapper {
+    min-width: 700px;
+  }
+  
+  .modern-table :deep(.el-table__cell) {
+    padding: 6px 8px !important;
+    font-size: 14px;
+  }
+  
+  .modern-table :deep(.el-table__header-wrapper) {
+    font-size: 13px;
+  }
 }
 
 .index-cell {

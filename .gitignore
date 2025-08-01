@@ -36,7 +36,6 @@ pids
 Thumbs.db
 
 # Optional dependency lock files
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
@@ -48,3 +47,26 @@ target/
 # Database data
 mysql-data/
 redis-data/
+
+# Build outputs
+dist/
+build/
+
+# Development data
+mysql-data/
+redis-data/
+uploads/
+mock-api/
+
+# Docker
+Dockerfile.*
+docker-compose*.yml
+
+# IDE
+*.swp
+*~
+
+# Test reports
+test/*-report.md
+test/*-summary.md
+test/*-check.md

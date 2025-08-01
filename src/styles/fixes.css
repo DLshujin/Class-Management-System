@@ -1,0 +1,74 @@
+/* 全局修复CSS */
+
+/* 修复点击和悬停时文件变模糊的问题 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+  outline: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+*:active {
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+*:hover {
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* 禁用所有可能导致模糊的效果 */
+.el-button:hover,
+.el-card:hover,
+.stat-card:hover,
+.modern-card:hover,
+.el-table__row:hover {
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* 优化90%缩放下的显示效果 */
+.page-container,
+.student-page-container,
+.class-page-container,
+.course-page-container,
+.teacher-page,
+.schedule-container {
+  padding: 12px !important;
+}
+
+/* 减少组件间距适应90%缩放 */
+.stats-overview {
+  margin-bottom: 20px !important;
+}
+
+.search-filter-section {
+  margin-bottom: 20px !important;
+}
+
+/* 防止横向滚动 */
+body {
+  overflow-x: hidden !important;
+}
+
+.el-table {
+  overflow-x: auto !important;
+}
+
+/* 确保表格在90%缩放下正常显示 */
+.modern-table {
+  min-width: auto !important;
+  width: 100% !important;
+}

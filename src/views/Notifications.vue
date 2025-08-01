@@ -164,7 +164,7 @@
                   <div class="message-content">
                     <div class="message-header">
                       <div class="message-title">{{ notification.title }}</div>
-                      <div class="message-time">{{ formatDate(notification.createTime) }}</div>
+                      <div class="message-time">{{ notification.createTime || notification.time }}</div>
                     </div>
                     <div class="message-preview">{{ notification.content }}</div>
                   </div>
@@ -207,7 +207,7 @@
                       <div class="notice-title">{{ notice.title }}</div>
                       <div class="notice-meta">
                         <el-tag v-if="notice.priority === 'high'" type="danger" size="small">重要</el-tag>
-                        <span class="notice-time">{{ formatDate(notice.createTime) }}</span>
+                        <span class="notice-time">{{ notice.createTime || notice.time }}</span>
                       </div>
                     </div>
                     <div class="notice-preview">{{ notice.content }}</div>
@@ -242,6 +242,14 @@
                   标为已读
                 </el-button>
                 <el-button 
+                  type="warning" 
+                  size="small" 
+                  @click="editMessage(selectedMessage)"
+                  plain
+                >
+                  编辑
+                </el-button>
+                <el-button 
                   type="danger" 
                   size="small" 
                   @click="deleteMessage(selectedMessage)"
@@ -262,7 +270,7 @@
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z"/>
                 </svg>
-                <span>{{ formatDate(selectedMessage.createTime) }}</span>
+                <span>{{ selectedMessage.createTime || selectedMessage.time }}</span>
               </div>
               <div class="meta-item" v-if="selectedMessage.priority">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -328,6 +336,71 @@
         <el-button type="primary" @click="sendMessage">发送</el-button>
       </template>
     </el-dialog>
+
+    <!-- 编辑消息对话框 -->
+    <el-dialog 
+      v-model="editDialogVisible" 
+      title="编辑消息" 
+      width="600px"
+      @close="handleEditDialogClose"
+    >
+      <el-form 
+        ref="editFormRef"
+        :model="editForm" 
+        :rules="editRules"
+        label-width="80px"
+        class="edit-form"
+      >
+        <el-form-item label="消息类型" prop="type">
+          <el-select v-model="editForm.type" placeholder="选择消息类型" style="width: 100%">
+            <el-option label="系统通知" value="system"></el-option>
+            <el-option label="个人消息" value="personal"></el-option>
+            <el-option label="重要公告" value="notice"></el-option>
+            <el-option label="课程提醒" value="course"></el-option>
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="消息标题" prop="title">
+          <el-input 
+            v-model="editForm.title" 
+            placeholder="请输入消息标题"
+            maxlength="50"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        
+        <el-form-item label="消息内容" prop="content">
+          <el-input 
+            v-model="editForm.content" 
+            type="textarea" 
+            :rows="8" 
+            placeholder="请输入消息内容"
+            maxlength="500"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        
+        <el-form-item label="预览效果">
+          <div class="preview-area">
+            <div class="preview-title">{{ editForm.title || '消息标题预览' }}</div>
+            <div class="preview-content">{{ editForm.content || '消息内容预览...' }}</div>
+          </div>
+        </el-form-item>
+      </el-form>
+      
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取消</el-button>
+          <el-button 
+            type="primary" 
+            :loading="editLoading"
+            @click="confirmEdit"
+          >
+            保存修改
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -336,7 +409,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useNotificationStore } from '@/stores/notification'
 import { useUserStore } from '@/stores/user'
-import { formatDate } from '@/utils'
+// import { formatDate } from '@/utils'
 
 const notificationStore = useNotificationStore()
 const userStore = useUserStore()
@@ -354,6 +427,32 @@ const messageForm = ref({
   content: '',
   priority: 'normal'
 })
+
+// 编辑消息相关
+const editDialogVisible = ref(false)
+const editLoading = ref(false)
+const editFormRef = ref(null)
+const editForm = ref({
+  id: null,
+  title: '',
+  content: '',
+  type: ''
+})
+
+// 编辑表单验证规则
+const editRules = {
+  title: [
+    { required: true, message: '请输入消息标题', trigger: 'blur' },
+    { min: 2, max: 50, message: '标题长度在 2 到 50 个字符', trigger: 'blur' }
+  ],
+  content: [
+    { required: true, message: '请输入消息内容', trigger: 'blur' },
+    { min: 5, max: 500, message: '内容长度在 5 到 500 个字符', trigger: 'blur' }
+  ],
+  type: [
+    { required: true, message: '请选择消息类型', trigger: 'change' }
+  ]
+}
 
 // 计算属性
 const allNotifications = computed(() => notificationStore.notifications || [])
@@ -395,9 +494,14 @@ const markAllAsRead = () => {
 
 // 刷新消息
 const refreshNotifications = () => {
-  notificationStore.fetchNotifications()
-  notificationStore.fetchNotices()
-  ElMessage.success('消息已刷新')
+  try {
+    notificationStore.fetchNotifications()
+    notificationStore.fetchNotices()
+    ElMessage.success('消息已刷新')
+  } catch (error) {
+    console.error('刷新消息失败:', error)
+    ElMessage.error('刷新消息失败')
+  }
 }
 
 // 删除消息
@@ -438,6 +542,67 @@ const sendMessage = () => {
     title: '',
     content: '',
     priority: 'normal'
+  }
+}
+
+// 编辑消息
+const editMessage = (message) => {
+  editForm.value = {
+    id: message.id,
+    title: message.title,
+    content: message.content,
+    type: message.type || 'system'
+  }
+  editDialogVisible.value = true
+}
+
+// 确认编辑
+const confirmEdit = async () => {
+  if (!editFormRef.value) return
+  
+  try {
+    await editFormRef.value.validate()
+    editLoading.value = true
+    
+    // 调用store的更新方法
+    const success = await notificationStore.updateNotification(editForm.value.id, {
+      title: editForm.value.title,
+      content: editForm.value.content,
+      type: editForm.value.type
+    })
+    
+    if (success) {
+      ElMessage.success('消息编辑成功')
+      editDialogVisible.value = false
+      
+      // 如果当前选中的消息是被编辑的消息，更新选中状态
+      if (selectedMessage.value?.id === editForm.value.id) {
+        // 从notifications中查找更新后的消息
+        const updatedMessage = allNotifications.value.find(n => n.id === editForm.value.id)
+        if (updatedMessage) {
+          selectedMessage.value = updatedMessage
+        }
+      }
+    } else {
+      ElMessage.error('消息编辑失败')
+    }
+  } catch (error) {
+    ElMessage.error('请检查输入内容')
+  } finally {
+    editLoading.value = false
+  }
+}
+
+// 处理编辑对话框关闭
+const handleEditDialogClose = () => {
+  if (editFormRef.value) {
+    editFormRef.value.resetFields()
+  }
+  editForm.value = {
+    id: null,
+    title: '',
+    content: '',
+    type: ''
   }
 }
 
@@ -797,6 +962,7 @@ onMounted(() => {
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -920,6 +1086,115 @@ onMounted(() => {
 .empty-text {
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+/* 编辑对话框样式 */
+.edit-form {
+  margin: 0;
+}
+
+.edit-form .el-form-item {
+  margin-bottom: 20px;
+}
+
+.edit-form .el-form-item__label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.edit-form .el-input__wrapper,
+.edit-form .el-textarea__inner,
+.edit-form .el-select .el-input__wrapper {
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+}
+
+.edit-form .el-input__wrapper:hover,
+.edit-form .el-textarea__inner:hover,
+.edit-form .el-select .el-input__wrapper:hover {
+  border-color: var(--primary-color);
+}
+
+.edit-form .el-input__wrapper.is-focus,
+.edit-form .el-textarea__inner:focus,
+.edit-form .el-select .el-input__wrapper.is-focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 预览区域样式 */
+.preview-area {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  min-height: 120px;
+}
+
+.preview-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preview-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.preview-area:empty::before {
+  content: "这里将显示消息的预览效果...";
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* 对话框按钮样式 */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dialog-footer .el-button {
+  min-width: 80px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+}
+
+.dialog-footer .el-button--primary {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.dialog-footer .el-button--primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* 编辑表单响应式 */
+@media (max-width: 768px) {
+  .edit-form {
+    padding: 0 16px;
+  }
+  
+  .preview-area {
+    padding: 12px;
+    min-height: 80px;
+  }
+  
+  .preview-title {
+    font-size: 14px;
+  }
+  
+  .preview-content {
+    font-size: 13px;
+  }
 }
 
 /* 动画 */

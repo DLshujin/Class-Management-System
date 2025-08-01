@@ -1,0 +1,306 @@
+/* 🎯 现代化点名界面样式 */
+
+/* 点名弹窗整体样式 */
+.attendance-dialog.modern-attendance {
+  --el-border-radius-base: 20px;
+}
+
+.attendance-dialog.modern-attendance .el-dialog {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.attendance-dialog.modern-attendance .el-dialog__header {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: white !important;
+  padding: 20px 30px !important;
+  margin: 0 !important;
+}
+
+.attendance-dialog.modern-attendance .el-dialog__title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: white !important;
+}
+
+.attendance-dialog.modern-attendance .el-dialog__body {
+  padding: 0 !important;
+  background: #f8fafc !important;
+}
+
+/* 现代化卡片样式 */
+.modern-card {
+  background: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  margin: 20px !important;
+  overflow: hidden !important;
+}
+
+/* 完成状态样式 */
+.completion-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.status-badge.completed {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* 只读提示样式 */
+.readonly-notice {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+  border: 1px solid #fde68a !important;
+  margin-top: 12px !important;
+}
+
+/* 排课表中已完成点名的课程样式 */
+.schedule-item.attendance-completed {
+  opacity: 0.6 !important;
+  position: relative !important;
+  filter: grayscale(0.3) !important;
+}
+
+.schedule-item.attendance-completed::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+}
+
+/* 点名完成徽章 */
+.attendance-badge.completed {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: white !important;
+  padding: 2px 6px !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3) !important;
+  z-index: 10 !important;
+}
+
+/* 快速统计样式 */
+.quick-stats {
+  display: flex !important;
+  gap: 16px !important;
+  margin-left: 16px !important;
+  flex-wrap: wrap !important;
+}
+
+.quick-stats .stat {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  white-space: nowrap !important;
+}
+
+.quick-stats .stat.present {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.quick-stats .stat.late {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.quick-stats .stat.absent {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+/* 点名控制按钮状态优化 */
+.attendance-controls .el-radio-button.present-btn.is-active .el-radio-button__inner {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  color: white !important;
+}
+
+.attendance-controls .el-radio-button.late-btn.is-active .el-radio-button__inner {
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: white !important;
+}
+
+.attendance-controls .el-radio-button.absent-btn.is-active .el-radio-button__inner {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: white !important;
+}
+
+/* 学生卡片优化 */
+.student-card {
+  transition: all 0.2s ease !important;
+}
+
+.student-card.present {
+  border-left: 4px solid #10b981 !important;
+  background: #f0fdfa !important;
+}
+
+.student-card.late {
+  border-left: 4px solid #f59e0b !important;
+  background: #fffbeb !important;
+}
+
+.student-card.absent {
+  border-left: 4px solid #ef4444 !important;
+  background: #fef2f2 !important;
+}
+
+/* 批量操作按钮优化 */
+.batch-actions {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.batch-actions .el-button {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}
+
+/* 底部操作栏优化 */
+.attendance-footer {
+  background: white !important;
+  border-top: 1px solid #e5e7eb !important;
+  padding: 20px 30px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.footer-summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  flex-wrap: wrap !important;
+}
+
+.footer-actions {
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.footer-actions .el-button {
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  padding: 12px 24px !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .attendance-dialog.modern-attendance {
+    width: 95vw !important;
+    margin: 0 !important;
+  }
+  
+  .modern-card {
+    margin: 10px !important;
+  }
+  
+  .student-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    min-height: auto !important;
+  }
+  
+  .student-card-main {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  
+  .student-card .student-info {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  .student-details {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  
+  .attendance-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .footer-actions {
+    justify-content: center !important;
+  }
+  
+  .quick-stats {
+    margin-left: 0 !important;
+    justify-content: center !important;
+  }
+}
+
+/* 动画效果 */
+.attendance-badge.completed {
+  animation: fadeInScale 0.3s ease-out !important;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 悬停效果 */
+.schedule-item:hover .attendance-badge.completed {
+  transform: scale(1.1) !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* 确保点名完成的课程有明显的视觉区别 */
+.schedule-item.attendance-completed .schedule-title {
+  text-decoration: line-through !important;
+  opacity: 0.7 !important;
+}
+
+.schedule-item.attendance-completed:hover {
+  opacity: 0.8 !important;
+  transform: scale(1.02) !important;
+  transition: all 0.2s ease !important;
+}

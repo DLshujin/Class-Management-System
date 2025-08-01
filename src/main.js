@@ -16,6 +16,8 @@ import router from './router.js'
 
 // 引入全局样式
 import './styles/global.css'
+import './styles/fixes.css'
+import './styles/attendance.css'
 
 // 引入日志系统
 import { logger } from './utils/logger.js'
@@ -32,19 +34,24 @@ app.use(pinia)
 app.use(ElementPlus)
 app.use(router)
 
-logger.info('应用启动', '初始化Vue应用')
+// 初始化主题
+import { useThemeStore } from './stores/theme.js'
+const themeStore = useThemeStore()
+themeStore.initTheme()
 
-// 开发环境数据预加载
-if (import.meta.env.DEV) {
+logger.info('应用启动', '初始化Vue应用和主题')
+
+// 开发环境数据预加载 - 暂时禁用，因为后端还未完成
+if (import.meta.env.DEV && false) {
   logger.info('开发环境检测', '准备预加载数据')
     
-  // 异步加载和初始化数据
+  // 异步加载和初始化数据 - 暂时注释掉，等后端完成后再启用
   const loadTasks = [
-    { module: './stores/student.js', store: 'useStudentStore', method: 'loadStudents' },
-    { module: './stores/teacher.js', store: 'useTeacherStore', method: 'loadTeachers' },
-    { module: './stores/course.js', store: 'useCourseStore', method: 'loadCourses' },
-    { module: './stores/financeData.js', store: 'useFinanceStore', method: 'loadFinanceRecords' },
-    { module: './stores/notification.js', store: 'useNotificationStore', method: 'loadNotifications' }
+    { module: './stores/student.js', store: 'useStudentStore', method: 'fetchStudents' },
+    { module: './stores/teacher.js', store: 'useTeacherStore', method: 'fetchTeachers' },
+    { module: './stores/course.js', store: 'useCourseStore', method: 'fetchCourses' },
+    { module: './stores/financeData.js', store: 'useFinanceStore', method: 'fetchFinanceRecords' },
+    { module: './stores/notification.js', store: 'useNotificationStore', method: 'fetchNotifications' }
   ]
   
   // 使用 Promise.all 并行加载所有数据
@@ -53,9 +60,13 @@ if (import.meta.env.DEV) {
       try {
         const storeModule = await import(/* @vite-ignore */ task.module)
         const store = storeModule[task.store]()
-        await store[task.method]()
-        logger.info(`数据加载完成: ${task.store}`)
-    } catch (error) {
+        if (typeof store[task.method] === 'function') {
+          await store[task.method]()
+          logger.info(`数据加载完成: ${task.store}`)
+        } else {
+          logger.warn(`方法不存在: ${task.store}.${task.method}`)
+        }
+      } catch (error) {
         logger.error(`数据加载失败: ${task.store}`, error)
       }
     })

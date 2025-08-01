@@ -118,10 +118,14 @@ export const useFinanceDataStore = defineStore('financeData', () => {
           type: 'income',
           category: 'tuition',
           categoryName: '学费',
-          amount: 2400,
+          amount: 3600,
+          studentId: 1,              // 新增学生关联
+          studentName: '张三',       // 新增学生姓名
+          classId: 1,               // 新增班级关联
+          className: 'Python基础A班', // 新增班级名称
           relatedId: 'class_1',
-          relatedName: 'Python-A班',
-          description: '张三学费缴纳',
+          relatedName: 'Python基础A班',
+          description: '张三 - Python基础A班学费缴纳',
           createdBy: '管理员',
           status: 'approved'
         },
@@ -131,10 +135,14 @@ export const useFinanceDataStore = defineStore('financeData', () => {
           type: 'income',
           category: 'tuition',
           categoryName: '学费',
-          amount: 3200,
+          amount: 4200,
+          studentId: 2,              // 新增学生关联
+          studentName: '李四',       // 新增学生姓名
+          classId: 2,               // 新增班级关联
+          className: 'Java程序设计B班', // 新增班级名称
           relatedId: 'class_2',
-          relatedName: 'Java-A班',
-          description: '李四学费缴纳',
+          relatedName: 'Java程序设计B班',
+          description: '李四 - Java程序设计B班学费缴纳',
           createdBy: '管理员',
           status: 'approved'
         },
@@ -145,9 +153,11 @@ export const useFinanceDataStore = defineStore('financeData', () => {
           category: 'salary',
           categoryName: '工资',
           amount: 5000,
+          teacherId: 1,              // 新增老师关联
+          teacherName: '张伟',       // 新增老师姓名
           relatedId: 'teacher_1',
-          relatedName: '张老师',
-          description: '教师工资发放',
+          relatedName: '张伟',
+          description: '张伟老师工资发放',
           createdBy: '管理员',
           status: 'approved'
         },
@@ -277,7 +287,7 @@ export const useFinanceDataStore = defineStore('financeData', () => {
         `/finance/records/${id}`,
         recordData,
         mockResponse,
-        { method: 'put' }
+        { method: 'put', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，更新本地列表以直观显示变化
@@ -306,7 +316,7 @@ export const useFinanceDataStore = defineStore('financeData', () => {
         `/finance/records/${id}`,
         {},
         mockResponse,
-        { method: 'delete' }
+        { method: 'delete', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，从本地列表移除以直观显示变化
@@ -334,7 +344,7 @@ export const useFinanceDataStore = defineStore('financeData', () => {
         `/finance/records/${id}/approve`,
         { action, reason },
         mockResponse,
-        { method: 'post' }
+        { method: 'post', forceMock: true }  // 强制使用模拟数据
       )
 
       // 如果是模拟数据，更新本地记录状态
@@ -378,7 +388,7 @@ export const useFinanceDataStore = defineStore('financeData', () => {
       const response = await fetchData(
         '/finance/stats',
         mockStats,
-        { forceMock: false }
+        { forceMock: true }  // 强制使用模拟数据
       )
 
       logger.info(`✅ 财务统计获取成功 (数据源: ${getDataSourceType.value})`)

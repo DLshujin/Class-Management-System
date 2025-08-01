@@ -21,6 +21,7 @@ export const useCourseStore = defineStore('course', () => {
     {
       id: 1,
       name: 'Python基础入门',
+      code: 'PY-001', // 添加课程编码
       type: '编程基础', // 新增
       category: '编程基础',
       price: 3600,
@@ -51,6 +52,7 @@ export const useCourseStore = defineStore('course', () => {
     {
       id: 2,
       name: 'Java程序设计',
+      code: 'JAVA-001', // 添加课程编码
       type: '编程基础', // 新增
       category: '编程基础',
       price: 4200,
@@ -81,6 +83,7 @@ export const useCourseStore = defineStore('course', () => {
     {
       id: 3,
       name: '人工智能入门',
+      code: 'AI-001', // 添加课程编码
       type: '前沿技术', // 新增
       category: '前沿技术',
       price: 4800,
@@ -111,6 +114,7 @@ export const useCourseStore = defineStore('course', () => {
     {
       id: 4,
       name: '网页设计基础',
+      code: 'WEB-001', // 添加课程编码
       type: '前端开发', // 新增
       category: '前端开发',
       price: 2800,
@@ -141,6 +145,7 @@ export const useCourseStore = defineStore('course', () => {
     {
       id: 5,
       name: 'Scratch少儿编程',
+      code: 'SCR-001', // 添加课程编码
       type: '少儿编程', // 新增
       category: '少儿编程',
       price: 2000,
@@ -245,7 +250,7 @@ export const useCourseStore = defineStore('course', () => {
             total: mockCourses.length
           }
         },
-        { forceMock: useMock }
+        { forceMock: true }  // 强制使用模拟数据
       )
 
       courses.value = response.list || response
@@ -310,7 +315,7 @@ export const useCourseStore = defineStore('course', () => {
         `/courses/${id}`,
         courseData,
         mockResponse,
-        { method: 'put' }
+        { method: 'put', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，更新本地列表以直观显示变化
@@ -337,7 +342,7 @@ export const useCourseStore = defineStore('course', () => {
         `/courses/${id}`,
         {},
         mockResponse,
-        { method: 'delete' }
+        { method: 'delete', forceMock: true }  // 强制使用模拟数据
       )
 
       // 模拟数据模式下，从本地列表移除以直观显示变化
@@ -403,7 +408,7 @@ export const useCourseStore = defineStore('course', () => {
         `/courses/${id}/status`,
         { status },
         mockResponse,
-        { method: 'put' }
+        { method: 'put', forceMock: true }  // 强制使用模拟数据
       )
 
       // 如果是模拟数据，更新本地课程状态

@@ -733,7 +733,13 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Search, Download, Upload, View, Refresh } from '@element-plus/icons-vue'
 import { useTeacherStore } from '../stores/teacher'
 import { useDataSourceStore } from '../stores/dataSource'
-import { formatDate } from '../utils/index'
+// import { formatDate } from '../utils/index'
+
+// 临时格式化日期函数
+const formatDate = (date) => {
+  if (!date) return '--'
+  return new Date(date).toLocaleDateString('zh-CN')
+}
 import { logger } from '../utils/logger.js'
 import { errorHandler } from '../utils/errorHandler.js'
 import api from '../utils/api';
@@ -1273,7 +1279,7 @@ watch(() => route.path, (newPath, oldPath) => {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 

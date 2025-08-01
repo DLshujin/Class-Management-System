@@ -766,105 +766,122 @@ const getTotalRevenue = () => {
 }
 
 // 图表配置
-const revenueChartOption = computed(() => ({
-  title: {
-    text: '最近7天收入趋势',
-    textStyle: {
-      fontSize: 14,
-      fontWeight: 'normal',
-      color: '#666'
-    }
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross'
-    }
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-    axisLine: {
-      lineStyle: {
-        color: '#e5e7eb'
+const revenueChartOption = computed(() => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+  return {
+    backgroundColor: 'transparent',
+    title: {
+      text: '最近7天收入趋势',
+      textStyle: {
+        fontSize: 14,
+        fontWeight: 'normal',
+        color: isDark ? '#ffffff' : '#666'
       }
     },
-    axisLabel: {
-      color: '#6b7280'
-    }
-  },
-  yAxis: {
-    type: 'value',
-    axisLine: {
-      lineStyle: {
-        color: '#e5e7eb'
-      }
-    },
-    axisLabel: {
-      color: '#6b7280',
-      formatter: '¥{value}'
-    },
-    splitLine: {
-      lineStyle: {
-        color: '#f3f4f6'
-      }
-    }
-  },
-  series: [
-    {
-      name: '收入',
-      type: 'line',
-      stack: 'Total',
-      smooth: true,
-      lineStyle: {
-        width: 3,
-        color: '#3b82f6'
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
       },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [{
-            offset: 0, color: 'rgba(59, 130, 246, 0.3)'
-          }, {
-            offset: 1, color: 'rgba(59, 130, 246, 0.05)'
-          }]
+      backgroundColor: isDark ? '#2d3748' : 'rgba(255,255,255,0.9)',
+      borderColor: isDark ? '#4a5568' : '#e5e7eb',
+      textStyle: {
+        color: isDark ? '#ffffff' : '#333333'
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#4a5568' : '#e5e7eb'
         }
       },
-      data: [1200, 1320, 980, 1350, 1400, 1600, 1800]
-    }
-  ]
-}))
+      axisLabel: {
+        color: isDark ? '#e2e8f0' : '#6b7280'
+      }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: isDark ? '#4a5568' : '#e5e7eb'
+        }
+      },
+      axisLabel: {
+        color: isDark ? '#e2e8f0' : '#6b7280',
+        formatter: '¥{value}'
+      },
+      splitLine: {
+        lineStyle: {
+          color: isDark ? '#4a5568' : '#f3f4f6'
+        }
+      }
+    },
+    series: [
+      {
+        name: '收入',
+        type: 'line',
+        stack: 'Total',
+        smooth: true,
+        lineStyle: {
+          width: 3,
+          color: '#3b82f6'
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [{
+              offset: 0, color: 'rgba(59, 130, 246, 0.3)'
+            }, {
+              offset: 1, color: 'rgba(59, 130, 246, 0.05)'
+            }]
+          }
+        },
+        data: [1200, 1320, 980, 1350, 1400, 1600, 1800]
+      }
+    ]
+  }
+});
 
-const courseChartOption = computed(() => ({
-  title: {
+const courseChartOption = computed(() => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+  return {
+      backgroundColor: 'transparent',
+    title: {
     text: '课程分布统计',
     textStyle: {
       fontSize: 14,
       fontWeight: 'normal',
-      color: '#666'
+      color: isDark ? '#ffffff' : '#666'
     }
   },
   tooltip: {
     trigger: 'item',
-    formatter: '{a} <br/>{b}: {c} ({d}%)'
+    formatter: '{a} <br/>{b}: {c} ({d}%)',
+    backgroundColor: isDark ? '#2d3748' : 'rgba(255,255,255,0.9)',
+    borderColor: isDark ? '#4a5568' : '#e5e7eb',
+    textStyle: {
+      color: isDark ? '#ffffff' : '#333333'
+    }
   },
   legend: {
     orient: 'vertical',
     left: 'left',
     bottom: 20,
     textStyle: {
-      color: '#6b7280'
+      color: isDark ? '#e2e8f0' : '#6b7280'
     }
   },
   series: [
@@ -896,7 +913,8 @@ const courseChartOption = computed(() => ({
       ]
     }
   ]
-}))
+  }
+});
 
 // 页面加载时初始化
 onMounted(() => {
@@ -1605,6 +1623,194 @@ onMounted(() => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* 🌙 暗色主题首页优化 - 增强对比度 */
+[data-theme='dark'] .home-container {
+  background: transparent;
+}
+
+[data-theme='dark'] .welcome-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #64748b;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='dark'] .welcome-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    rgba(99, 102, 241, 0.1) 0%, 
+    transparent 50%, 
+    rgba(139, 92, 246, 0.1) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .welcome-content {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme='dark'] .greeting {
+  background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme='dark'] .subtitle {
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .stats-overview {
+  background: transparent;
+}
+
+[data-theme='dark'] .stats-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid #64748b;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  border-color: #a855f7;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+}
+
+[data-theme='dark'] .stats-card .icon {
+  background: var(--primary-gradient);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme='dark'] .stats-card .number {
+  color: #f8fafc !important;
+  text-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme='dark'] .stats-card .label {
+  color: #cbd5e0 !important;
+}
+
+[data-theme='dark'] .stats-card .trend {
+  color: #34d399 !important;
+}
+
+/* 图表区域优化 */
+[data-theme='dark'] .chart-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .section-title {
+  color: #f8fafc;
+  text-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme='dark'] .section-subtitle {
+  color: #94a3b8;
+}
+
+/* 活动列表优化 */
+[data-theme='dark'] .activity-item {
+  background: linear-gradient(135deg, #334155, #475569);
+  border: 1px solid #64748b;
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .activity-item:hover {
+  background: linear-gradient(135deg, #475569, #64748b);
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .activity-icon {
+  background: var(--primary-gradient);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme='dark'] .activity-text {
+  color: #e2e8f0;
+}
+
+[data-theme='dark'] .activity-time {
+  color: #94a3b8;
+}
+
+/* 快捷操作区域 */
+[data-theme='dark'] .quick-actions-grid .action-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .quick-actions-grid .action-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  border-color: #6366f1;
+}
+
+[data-theme='dark'] .action-card .action-icon {
+  background: var(--primary-gradient);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme='dark'] .action-card .action-title {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .action-card .action-desc {
+  color: #94a3b8;
+}
+
+/* 通知公告区域 */
+[data-theme='dark'] .notice-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .notice-item {
+  border-bottom: 1px solid #475569;
+  transition: all 0.3s ease;
+}
+
+[data-theme='dark'] .notice-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  transform: translateX(3px);
+}
+
+[data-theme='dark'] .notice-title {
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .notice-time {
+  color: #94a3b8;
+}
+
+/* 响应式优化 */
+@media (max-width: 1200px) {
+  [data-theme='dark'] .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  [data-theme='dark'] .stats-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  [data-theme='dark'] .welcome-section {
+    padding: 24px 20px;
   }
 }
 </style> 

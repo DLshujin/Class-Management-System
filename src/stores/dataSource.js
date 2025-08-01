@@ -3,11 +3,17 @@ import api from '../utils/api.js'
 
 export const useDataSourceStore = defineStore('dataSource', {
   state: () => ({
-    type: 'mock', // 默认使用模拟数据
+    type: 'mock', // 强制使用模拟数据
     backendAvailable: false
   }),
   actions: {
     async checkBackendStatus() {
+      // 临时禁用后端检测，强制使用模拟数据
+      this.backendAvailable = false
+      this.type = 'mock'
+      console.log('🔧 强制使用模拟数据模式，跳过后端检测')
+      
+      /* 原始代码，临时注释
       try {
         await api.get('/health')
         this.backendAvailable = true
@@ -18,6 +24,7 @@ export const useDataSourceStore = defineStore('dataSource', {
         this.type = 'mock'
         console.log('⚠️ 后端服务不可用，使用模拟数据')
       }
+      */
     },
     setDataSourceType(type) {
       this.type = type

@@ -35,6 +35,12 @@
             </svg>
             新增记录
           </el-button>
+          <el-button type="success" class="modern-btn success" @click="testAndRefresh">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/>
+            </svg>
+            刷新数据
+          </el-button>
         </div>
       </div>
     </div>
@@ -160,6 +166,28 @@
             <div class="stat-title">年度总收入</div>
             <div class="stat-value">¥{{ formatPrice(yearlyIncome) }}</div>
             <div class="stat-description">较去年增长</div>
+          </div>
+        </div>
+
+        <div class="stat-card student-card fade-in-up" style="animation-delay: 0.6s">
+          <div class="stat-header">
+            <div class="stat-icon student-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
+              </svg>
+            </div>
+            <div class="trend-badge" :class="studentFeeGrowth >= 0 ? 'positive' : 'negative'">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <path v-if="studentFeeGrowth >= 0" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                <path v-else d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/>
+              </svg>
+              {{ studentFeeGrowth >= 0 ? '+' : '' }}{{ formatPrice(Math.abs(studentFeeGrowth)) }}
+            </div>
+          </div>
+          <div class="stat-body">
+            <div class="stat-title">学员费用</div>
+            <div class="stat-value">¥{{ formatPrice(reactiveStudentFeeIncome) }}</div>
+            <div class="stat-description">本月收入</div>
           </div>
         </div>
       </div>
@@ -621,6 +649,7 @@ import api from '../utils/api';
 import { useFinanceDataStore } from '../stores/financeData';
 import { useClassStore } from '../stores/class';
 import { useTeacherStore } from '../stores/teacher';
+import { useStudentStore } from '../stores/student';
 import FinanceApproval from '../components/FinanceApproval.vue';
 
 // 注册 ECharts 组件
@@ -630,6 +659,7 @@ use([CanvasRenderer, LineChart, PieChart, BarChart, GridComponent, TooltipCompon
 const financeStore = useFinanceDataStore();
 const classStore = useClassStore();
 const teacherStore = useTeacherStore();
+const studentStore = useStudentStore();
 
 // 数据加载状态
 const loading = computed(() => financeStore.loading);
@@ -722,7 +752,9 @@ const teacherOptions = computed(() => {
 
 // 计算属性
 const filteredFinanceList = computed(() => {
-  let filteredList = financeStore.getFinanceRecords || [];
+  let financeRecords = financeStore.getFinanceRecords || [];
+  let studentFeeRecords = getStudentFeeRecords();
+  let filteredList = [...financeRecords, ...studentFeeRecords];
   
   if (queryParams.type) {
     filteredList = filteredList.filter(item => item.type === queryParams.type);
@@ -749,7 +781,8 @@ const filteredFinanceList = computed(() => {
     filteredList = filteredList.filter(item => item.amount <= queryParams.maxAmount);
   }
   
-  return filteredList;
+  // 按日期降序排列，确保最新记录在前
+  return filteredList.sort((a, b) => new Date(b.date) - new Date(a.date));
 });
 
 const paginatedFinanceList = computed(() => {
@@ -758,11 +791,80 @@ const paginatedFinanceList = computed(() => {
   return filteredFinanceList.value.slice(start, end);
 });
 
+// 获取学员费用记录
+const getStudentFeeRecords = () => {
+  try {
+    // 从localStorage获取费用记录
+    const feeRecords = JSON.parse(localStorage.getItem('feeRecords') || '[]');
+    console.log('读取到的费用记录:', feeRecords); // 调试日志
+    
+    // 也从学员数据中获取费用信息
+    const students = studentStore.getStudents || [];
+    const studentFeeRecords = [];
+    
+    // 从学员数据生成费用记录
+    students.forEach(student => {
+      if (student.paidAmount && student.paidAmount > 0) {
+        studentFeeRecords.push({
+          id: `student_fee_${student.id}`,
+          date: student.joinDate || new Date().toISOString().split('T')[0],
+          type: 'income',
+          category: 'tuition',
+          categoryName: '学费',
+          amount: student.paidAmount,
+          relatedId: student.id,
+          relatedName: student.name,
+          description: `学员${student.name}学费收入`,
+          createdBy: '系统',
+          status: 'approved',
+          source: 'student',
+          studentInfo: {
+            courses: student.courses || [],
+            totalHours: student.totalHours || 0,
+            remainingHours: student.remainingHours || 0,
+            paymentMethod: student.paymentMethod || '未知'
+          }
+        });
+      }
+    });
+    
+    // 合并localStorage记录和学员数据记录
+    const localStorageRecords = feeRecords.map(record => ({
+      id: record.id,
+      date: record.createdAt ? record.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
+      type: 'income',
+      category: 'tuition',
+      categoryName: '学费',
+      amount: record.paidAmount || 0,
+      relatedId: record.studentId,
+      relatedName: record.studentName,
+      description: `学员${record.studentName}缴费 - ${record.actionType === 'create' ? '新增学员' : '追加付款'}`,
+      createdBy: '系统',
+      status: 'approved',
+      source: 'student_record',
+      studentInfo: {
+        courses: record.courses || [],
+        totalHours: record.totalHours || 0,
+        paymentMethod: record.paymentMethod || '未知'
+      }
+    }));
+    
+    const allRecords = [...studentFeeRecords, ...localStorageRecords];
+    console.log('生成的学员费用记录:', allRecords); // 调试日志
+    return allRecords;
+    
+  } catch (error) {
+    console.warn('读取学员费用记录失败:', error);
+    return [];
+  }
+};
+
 // 统计数据
 const totalIncome = computed(() => {
   const records = financeStore.getFinanceRecords || [];
-  const incomeRecords = records.filter(item => item.type === 'income');
-  return incomeRecords.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+  const studentFeeRecords = getStudentFeeRecords();
+  const allIncomeRecords = [...records.filter(item => item.type === 'income'), ...studentFeeRecords];
+  return allIncomeRecords.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
 });
 
 const totalExpense = computed(() => {
@@ -773,10 +875,12 @@ const totalExpense = computed(() => {
 
 const monthlyIncome = computed(() => {
   const records = financeStore.getFinanceRecords || [];
+  const studentFeeRecords = getStudentFeeRecords();
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   
-  const monthlyRecords = records.filter(item => {
+  const allRecords = [...records, ...studentFeeRecords];
+  const monthlyRecords = allRecords.filter(item => {
     const itemDate = new Date(item.date);
     const isCurrentMonth = item.type === 'income' && 
            itemDate.getMonth() === currentMonth && 
@@ -805,9 +909,11 @@ const monthlyExpense = computed(() => {
 
 const yearlyIncome = computed(() => {
   const records = financeStore.getFinanceRecords || [];
+  const studentFeeRecords = getStudentFeeRecords();
   const currentYear = new Date().getFullYear();
   
-  const yearlyRecords = records.filter(item => {
+  const allRecords = [...records, ...studentFeeRecords];
+  const yearlyRecords = allRecords.filter(item => {
     const itemDate = new Date(item.date);
     const isCurrentYear = item.type === 'income' && itemDate.getFullYear() === currentYear;
     return isCurrentYear;
@@ -862,6 +968,51 @@ const yearlyGrowth = computed(() => {
   // 模拟去年数据，实际应从历史数据获取
   const lastYearIncome = yearlyIncome.value * 0.8; // 假设去年收入为今年的80%
   return yearlyIncome.value - lastYearIncome;
+});
+
+// 学员费用相关统计
+const studentFeeIncome = computed(() => {
+  const studentFeeRecords = getStudentFeeRecords();
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const monthlyStudentRecords = studentFeeRecords.filter(record => {
+    const recordDate = new Date(record.date);
+    return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+  });
+  
+  const total = monthlyStudentRecords.reduce((sum, record) => sum + parseFloat(record.amount || 0), 0);
+  console.log('本月学员费用收入:', total, '记录数:', monthlyStudentRecords.length); // 调试日志
+  return total;
+});
+
+// 使用ref来强制可反应性
+const forceUpdate = ref(0);
+const triggerUpdate = () => {
+  forceUpdate.value++;
+};
+
+// 修改计算属性以依赖forceUpdate
+const reactiveStudentFeeIncome = computed(() => {
+  forceUpdate.value; // 依赖这个ref来触发重新计算
+  return studentFeeIncome.value;
+});
+
+const studentFeeGrowth = computed(() => {
+  forceUpdate.value; // 依赖forceUpdate来触发重新计算
+  // 计算学员费用的月度增长（与上月对比）
+  const currentIncome = reactiveStudentFeeIncome.value;
+  const lastMonthStudentFee = currentIncome * 0.85; // 假设上月为当月的85%
+  return currentIncome - lastMonthStudentFee;
+});
+
+const totalStudentFeeCount = computed(() => {
+  return getStudentFeeRecords().length;
+});
+
+const activeStudentCount = computed(() => {
+  const students = studentStore.getStudents || [];
+  return students.filter(student => student.status === 1).length; // 1 表示正常学习状态
 });
 
 // 获取预算剩余百分比
@@ -1341,14 +1492,83 @@ const barChartOption = computed(() => ({
 }))
 
 // 页面加载时获取数据
+// 强制刷新数据的函数
+const refreshData = () => {
+  // 触发计算属性的重新计算
+  const records = getStudentFeeRecords();
+  console.log('刷新数据，学员费用记录数量:', records.length);
+  triggerUpdate(); // 触发强制更新
+};
+
+// 测试和刷新数据的方法
+const testAndRefresh = () => {
+  console.log('=== 手动测试和刷新 ===');
+  
+  // 检查localStorage中的数据
+  const feeRecords = JSON.parse(localStorage.getItem('feeRecords') || '[]');
+  console.log('localStorage中的feeRecords:', feeRecords);
+  
+  // 检查学员数据
+  const students = studentStore.getStudents || [];
+  console.log('学员店中的数据:', students);
+  
+  // 刷新数据
+  refreshData();
+  
+  ElMessage.success('数据已刷新，请查看控制台日志');
+};
+
 onMounted(async () => {
   try {
     await Promise.all([
       getFinanceList(),
       classStore.fetchClasses(),
-      teacherStore.fetchTeachers()
+      teacherStore.fetchTeachers(),
+      studentStore.fetchStudents() // 加载学员数据以支持费用统计
     ]);
+    
+    // 强制触发一次学员费用记录的读取
+    setTimeout(() => {
+      refreshData();
+    }, 1000);
+    
+    // 定期刷新数据（可选）
+    setInterval(() => {
+      const currentRecords = getStudentFeeRecords();
+      if (currentRecords.length > 0) {
+        console.log('定期检查，当前学员费用记录数量:', currentRecords.length);
+        triggerUpdate();
+      }
+    }, 5000); // 每5秒检查一次
+    
+    // 监听学员费用记录更新事件
+    window.addEventListener('studentFeeRecordUpdated', (event) => {
+      console.log('接收到学员费用记录更新事件:', event.detail);
+      setTimeout(() => {
+        refreshData();
+      }, 200);
+    });
+    
+    // 监听学员数据更新（如果存在的话）
+    window.addEventListener('studentDataUpdated', () => {
+      console.log('接收到学员数据更新事件');
+      setTimeout(() => {
+        refreshData();
+      }, 200);
+    });
+    
+    // 监听localStorage变化
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'feeRecords') {
+        console.log('localStorage中feeRecords发生变化');
+        setTimeout(() => {
+          refreshData();
+        }, 100);
+      }
+    });
+    
   } catch (error) {
+    console.error('初始化数据失败:', error);
     ElMessage.error('初始化数据失败');
   }
 });
@@ -1419,7 +1639,7 @@ onMounted(async () => {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 
@@ -1467,6 +1687,10 @@ onMounted(async () => {
   background: linear-gradient(90deg, #06b6d4, #0891b2);
 }
 
+.stat-card.student-card::before {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+}
+
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
@@ -1511,6 +1735,10 @@ onMounted(async () => {
 
 .total-icon {
   background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.student-icon {
+  background: linear-gradient(135deg, #f97316, #ea580c);
 }
 
 .trend-badge {

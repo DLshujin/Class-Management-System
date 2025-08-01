@@ -387,7 +387,7 @@
            @selection-change="handleSelectionChange"
          >
         <el-table-column type="index" width="50" label="#" align="center" />
-        <el-table-column prop="name" label="课程名称" width="180">
+        <el-table-column prop="name" label="课程名称" min-width="150">
             <template #default="scope">
             <div class="course-name">
               <el-avatar :size="32" class="course-avatar">
@@ -397,8 +397,8 @@
               </div>
             </template>
           </el-table-column>
-        <el-table-column prop="code" label="课程编码" width="100" />
-        <el-table-column prop="type" label="课程类型" width="100">
+        <el-table-column prop="code" label="课程编码" width="90" />
+        <el-table-column prop="type" label="课程类型" width="90">
             <template #default="scope">
             <el-tag type="info" size="small">{{ scope.row.type || scope.row.category }}</el-tag>
             </template>
@@ -414,7 +414,7 @@
             <span>{{ scope.row.periods || scope.row.duration || '32' }}</span>
             </template>
           </el-table-column>
-        <el-table-column prop="suitableAge" label="适合年龄" width="100">
+        <el-table-column prop="suitableAge" label="适合年龄" width="90">
             <template #default="scope">
             <span>{{ scope.row.suitableAge || scope.row.ageRange || '8-16岁' }}</span>
             </template>
@@ -438,7 +438,7 @@
               </el-tag>
             </template>
           </el-table-column>
-        <el-table-column label="操作" fixed="right" width="280" align="center">
+        <el-table-column label="操作" fixed="right" width="220" align="center">
             <template #default="scope">
             <div class="action-buttons">
               <el-button type="primary" size="small" @click="handleEdit(scope.row)" class="action-btn">
@@ -513,7 +513,7 @@
           <el-input v-model="courseForm.name" placeholder="请输入课程名称" />
         </el-form-item>
         <el-form-item label="课程编码" prop="code">
-          <el-input v-model="courseForm.code" placeholder="请输入课程编码" :disabled="dialogType === 'edit'" />
+          <el-input v-model="courseForm.code" placeholder="请输入课程编码" />
         </el-form-item>
         <el-form-item label="课程类型" prop="type">
           <el-select v-model="courseForm.type" placeholder="请选择课程类型" style="width: 100%">
@@ -918,11 +918,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 课程管理页面样式 */
+/* 课程管理页面样式 - 优化90%缩放显示 */
 .course-page-container {
-  padding: 24px;
+  padding: 12px;
   background: var(--bg-secondary);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* 现代化页面头部 */

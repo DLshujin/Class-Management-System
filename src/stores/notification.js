@@ -226,18 +226,20 @@ export const useNotificationStore = defineStore('notification', () => {
   // 更新通知
   const updateNotification = async (id, data) => {
     try {
-      await api.put(`/notifications/${id}`, data)
+      // Mock模式下直接更新本地数据
       const idx = notifications.value.findIndex(n => n.id === id)
       if (idx > -1) {
-        notifications.value[idx] = { ...notifications.value[idx], ...data }
+        notifications.value[idx] = { 
+          ...notifications.value[idx], 
+          ...data,
+          updateTime: new Date().toISOString()
+        }
+        console.log('消息更新成功:', notifications.value[idx])
+        return true
       }
-      return true
+      return false
     } catch (error) {
-      // mock模式下本地更新
-      const idx = notifications.value.findIndex(n => n.id === id)
-      if (idx > -1) {
-        notifications.value[idx] = { ...notifications.value[idx], ...data }
-      }
+      console.error('更新消息失败:', error)
       return false
     }
   }
@@ -310,6 +312,11 @@ export const useNotificationStore = defineStore('notification', () => {
     }
   }
 
+  // 获取单个消息的方法
+  const getNotificationById = (id) => {
+    return notifications.value.find(n => n.id === id)
+  }
+
   return {
     // 状态
     notifications,
@@ -334,6 +341,7 @@ export const useNotificationStore = defineStore('notification', () => {
     clearAllNotifications,
     getNotificationStats,
     updateNotification,
-    updateNotice
+    updateNotice,
+    getNotificationById
   }
 }) 

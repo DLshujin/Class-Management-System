@@ -49,6 +49,26 @@ const reportError = (error, context = {}) => {
   }
 }
 
+// 错误过滤函数
+const shouldIgnoreError = (message) => {
+  if (typeof message !== 'string') {
+    message = String(message);
+  }
+  
+  const ignoredPatterns = [
+    'AttaTransport',
+    'message port closed',
+    'Extension context invalidated',
+    'chrome-extension://',
+    'addReadyCallback',
+    'inject success',
+    'DevTools is now available',
+    'A request to'
+  ];
+  
+  return ignoredPatterns.some(pattern => message.includes(pattern));
+};
+
 /**
  * 统一日志管理器
  */
@@ -76,6 +96,10 @@ export const logger = {
    */
   warn: (message, module = '', ...args) => {
     if (CURRENT_LOG_LEVEL <= LOG_LEVELS.WARN) {
+      // 过滤扩展相关的警告
+      if (shouldIgnoreError(message)) {
+        return;
+      }
       console.warn(`%c${formatPrefix('WARN', module)} ${message}`, LOG_STYLES.WARN, ...args)
     }
   },
@@ -84,6 +108,11 @@ export const logger = {
    * 错误信息
    */
   error: (message, error = null, module = '', context = {}) => {
+    // 过滤扩展相关的错误
+    if (shouldIgnoreError(message)) {
+      return;
+    }
+    
     const errorMsg = `${formatPrefix('ERROR', module)} ${message}`
     console.error(`%c${errorMsg}`, LOG_STYLES.ERROR, error)
     

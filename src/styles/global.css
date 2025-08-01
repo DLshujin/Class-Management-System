@@ -27,13 +27,7 @@
   --bg-secondary: #f9fafb;
   --bg-tertiary: #f3f4f6;
   
-  /* 🌙 暗色主题 */
-  --dark-bg-primary: #111827;
-  --dark-bg-secondary: #1f2937;
-  --dark-bg-tertiary: #374151;
-  --dark-text-primary: #f9fafb;
-  --dark-text-secondary: #d1d5db;
-  --dark-border: #374151;
+
   
   /* 📐 尺寸系统 */
   --spacing-xs: 4px;
@@ -452,17 +446,15 @@ body {
   box-shadow: var(--shadow-lg);
 }
 
-/* 🌙 暗色主题适配 */
-.dark {
-  --bg-primary: var(--dark-bg-primary);
-  --bg-secondary: var(--dark-bg-secondary);
-  --bg-tertiary: var(--dark-bg-tertiary);
-  --text-primary: var(--dark-text-primary);
-  --text-secondary: var(--dark-text-secondary);
-  --border-color: var(--dark-border);
-}
+
+
+
+
+
 
 /* 📱 响应式设计 */
+
+
 @media (max-width: 768px) {
   .page-header .header-content {
     flex-direction: column;
